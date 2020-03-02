@@ -232,7 +232,7 @@ if __name__ == '__main__':
         
         parser.add_argument('-tp','--timePeriod', metavar=('start_date', 'end_date'), help='list the top n API / URL endpoints between the 2 time stamps. 1st arg = start date & 2nd arg = end date. Format for both should be %%d/%%b/%%Y:%%H:%%M:%%S e.g. 17/May/2015:09:05:00 . n = 10 by default. n can be specified by the -l or --limit switch', nargs=2)    
         parser.add_argument('-l', '--limit', metavar='limit_by_value', help='limit results of top hits. It should be a positive integer only. Default is 10')        
-        parser.add_argument('-o', '--output', metavar='output_format', help='output format. Can be json or csv, defaults to raw on screen results', choices=['json'])        
+        parser.add_argument('-o', '--output', metavar='output_format', help='output format. Can be json. Defaults to raw on screen results', choices=['json'])        
         args = parser.parse_args()                
                         
         if args.timePeriod:
