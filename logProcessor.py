@@ -127,8 +127,7 @@ class ApaGixLogProcessor():
 
     def displayResults(self, resultList):
         for item in resultList:
-            print item
-        print "\n"
+            print item        
 
 
 # do some basic sanity checks before proceeding with the actual processing    
@@ -233,24 +232,20 @@ if __name__ == '__main__':
                     resultMessage = "\n[+] APIs filtered by IP =>  Top {0} {1}"
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(ip=args.topTen, limit=args.limit)                     
                     
-                    resultMessage = resultMessage.format(args.limit, "as per frequency of hit")                    
-                    print resultMessage
+                    print resultMessage.format(args.limit, "as per frequency of hit")                                        
                     naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
                     
-                    resultMessage = resultMessage.format(args.limit, "as per time")
-                    print resultMessage
+                    print resultMessage.format(args.limit, "as per time")
                     naviObj.displayResults(resultToPrintTopTenByTime)
 
                 else:                    
                     resultMessage = "\n[+] APIs filtered by IP =>  Top 10 {0}"                    
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(ip=args.topTen)                     
                     
-                    resultMessage = resultMessage.format("as per frequency of hit")
-                    print resultMessage
+                    print resultMessage.format("as per frequency of hit")                    
                     naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
                     
-                    resultMessage = resultMessage.format("as per time")
-                    print resultMessage
+                    print resultMessage.format("as per time")                    
                     naviObj.displayResults(resultToPrintTopTenByTime)
             
             else:
@@ -258,25 +253,23 @@ if __name__ == '__main__':
                     resultMessage = "\n[+] APIs unfiltered =>  Top {0} {1}"                    
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(limit=args.limit) 
 
-                    resultMessage = resultMessage.format(args.limit, "as per frequency of hit")
-                    print resultMessage
+                    print resultMessage.format(args.limit, "as per frequency of hit")                    
                     naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
                     
-                    resultMessage = resultMessage.format(args.limit, "as per time")
-                    print resultMessage
+                    print resultMessage.format(args.limit, "as per time")                    
                     naviObj.displayResults(resultToPrintTopTenByTime)                    
 
                 else:
                     resultMessage = "\n[+] APIs unfiltered =>  Top 10 {0}"                    
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis()                     
 
-                    resultMessage = resultMessage.format("as per frequency of hit")
-                    print resultMessage
+                    print resultMessage.format("as per frequency of hit")                    
                     naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
                     
-                    resultMessage = resultMessage.format("as per time")
-                    print resultMessage                                        
-                    naviObj.displayResults(resultToPrintTopTenByTime)                    
+                    print resultMessage.format("as per time")
+                    naviObj.displayResults(resultToPrintTopTenByTime)
+                    
+        print "\n"                    
 
     except CommandLineErrors as e:
         allLinesRead = None
