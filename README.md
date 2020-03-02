@@ -51,6 +51,9 @@ A simple python command line utility to parse Apache & Nginx logs. Gives top hit
     ('120.202.255.147 - /files/logstash/logstash-1.1.0-monolithic.jar', '18/May/2015:00:05:57')
     ('120.202.255.147 - /files/logstash/logstash-1.1.0-monolithic.jar', '17/May/2015:16:05:39')
 
+#### Note
+Above result shows only 10 rows despite limit being supplied as 30 because there are no more that 10 findings based on our query from the example
+
 ### Requirements
 Uses only standard libraries. No external pip installs needed. Simply clone the repo & run as shown in the example
 
