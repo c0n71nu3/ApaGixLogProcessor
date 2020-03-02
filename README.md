@@ -1,9 +1,9 @@
 # ApaGixLogProcessor
 A simple python command line utility to parse Apache & Nginx logs. Gives top hits by IP
 
-    python logProcessor.py -h
     usage: logProcessor.py [-h] [-fq | -tt [filter_by_ip]]
                            [-tp start_date end_date] [-l limit_by_value]
+                           [-o output_format]
                            logFile
     
     A python utility to get certain patterns from Nginx & Apache log files
@@ -28,7 +28,9 @@ A simple python command line utility to parse Apache & Nginx logs. Gives top hit
       -l limit_by_value, --limit limit_by_value
                             limit results of top hits. It should be a positive
                             integer only. Default is 10
-
+      -o output_format, --output output_format
+                            output format. Can be json. Defaults to raw on screen
+                            results
                         
 ### Output
 - Currently ouputs to stdout
@@ -51,6 +53,24 @@ A simple python command line utility to parse Apache & Nginx logs. Gives top hit
     ('120.202.255.147 - /files/logstash/logstash-1.1.0-monolithic.jar', '18/May/2015:00:05:57')
     ('120.202.255.147 - /files/logstash/logstash-1.1.0-monolithic.jar', '17/May/2015:16:05:39')
 
+> python logProcessor.py apache_logs.txt -tt 120.202.255.147 -l30 -tp
+> 17/May/2015:09:05:00 27/May/2015:09:05:00 -o json
+
+    [+] APIs filtered by IP =>  Top 30 as per frequency of hit
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'frequency': 10}
+    
+    [+] APIs filtered by IP =>  Top 30 as per time
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '20/May/2015:17:05:26'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '20/May/2015:08:05:41'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '19/May/2015:22:05:55'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '19/May/2015:12:05:19'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '19/May/2015:02:05:37'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '18/May/2015:19:05:27'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '18/May/2015:13:05:55'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '18/May/2015:06:05:33'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '18/May/2015:00:05:57'}
+    {'url': '/files/logstash/logstash-1.1.0-monolithic.jar', 'ip': '120.202.255.147', 'time': '17/May/2015:16:05:39'}
+
 #### Note
 Above result shows only 10 rows despite limit being supplied as 30 because there are no more that 10 findings based on our query from the example
 
@@ -63,3 +83,5 @@ Uses only standard libraries. No external pip installs needed. Simply clone the 
 - for time period parameter, date format is of type : 17/May/2015:09:05:00
 - for time period parameter, start date must be less than end date
 - all of these are also mentioned in the readme that can be pulled up using -h 
+
+
