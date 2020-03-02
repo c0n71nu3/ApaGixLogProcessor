@@ -114,26 +114,46 @@ class ApaGixLogProcessor():
             print e            
 
 
-    def formatResultAsJson(self, rawResult):
+    def displayResults(self, resultList, outputFormat=None, outputFrom=None):
+        finalResult = []                
         jsonFormattedResult = []
-        dictOfIpsWithCount = {'ip':None, 'frequency':None}
+
+        if resultList and outputFormat == 'json' and outputFrom == 'ipWithFreq':
+            dictOfIpsWithCount = {'ip':None, 'frequency':None}
+            for item in resultList:
+                dictOfIpsWithCount.update({'ip':item[0], 'frequency':item[1]})
+                jsonFormattedResult.append(dictOfIpsWithCount.copy())
+
+            finalResult = jsonFormattedResult
+            
+        elif resultList and outputFormat == 'json' and outputFrom in ['topTenH', 'topTenT']:
+            if outputFrom == 'topTenH':
+                key = 'frequency'
+            else:
+                key = 'time'
+            #('46.105.14.53 - /blog/tags/puppet?flav=rss20', 364)            
+            #('66.249.73.135 - /blog/tags/wine', '20/May/2015:21:05:59')
+            dictOfIpsWithCount = {'ip':None, 'url':None, key:None}
+            for item in resultList:
+                dictOfIpsWithCount.update({'ip':item[0].split(' - ')[0].strip(), 'url':item[0].split(' - ')[1].strip(), key:item[1]})
+                jsonFormattedResult.append(dictOfIpsWithCount.copy())
+            
+            finalResult = jsonFormattedResult
+
+        else:
+            if not resultList or outputFrom not in ['ipWithFreq', 'topTenH', 'topTenT']:
+                print "No results found"
+                return 
+            
+            finalResult = resultList            
         
-        for item in rawResult:
-            dictOfIpsWithCount.update({'ip':item[0], 'frequency':item[1]})
-            jsonFormattedResult.append(dictOfIpsWithCount.copy())
-
-        return jsonFormattedResult
-
-
-    def displayResults(self, resultList):
-        for item in resultList:
-            print item        
-
+        for item in finalResult:
+            print item                 
 
 # do some basic sanity checks before proceeding with the actual processing    
 def allSanityChecksPass(cmdLineArgs):
     try:
-        # print cmdLineArgs        
+        #print cmdLineArgs        
         stringToDateConversionExceptionExpected = None
         errorCode = None
         lineNumber = 0
@@ -212,6 +232,7 @@ if __name__ == '__main__':
         
         parser.add_argument('-tp','--timePeriod', metavar=('start_date', 'end_date'), help='list the top n API / URL endpoints between the 2 time stamps. 1st arg = start date & 2nd arg = end date. Format for both should be %%d/%%b/%%Y:%%H:%%M:%%S e.g. 17/May/2015:09:05:00 . n = 10 by default. n can be specified by the -l or --limit switch', nargs=2)    
         parser.add_argument('-l', '--limit', metavar='limit_by_value', help='limit results of top hits. It should be a positive integer only. Default is 10')        
+        parser.add_argument('-o', '--output', metavar='output_format', help='output format. Can be json or csv, defaults to raw on screen results', choices=['json'])        
         args = parser.parse_args()                
                         
         if args.timePeriod:
@@ -222,8 +243,8 @@ if __name__ == '__main__':
         
         if args.ipWithFreq:
             print "\n[+] Ips with frequency of hit"
-            resultToPrint = naviObj.getUniqueIpsWithFrequency()
-            naviObj.displayResults(resultToPrint)                                
+            resultToPrint = naviObj.getUniqueIpsWithFrequency()            
+            naviObj.displayResults(resultToPrint, outputFormat=args.output, outputFrom='ipWithFreq')                           
 
         else:
             resultMessage = ''
@@ -233,20 +254,20 @@ if __name__ == '__main__':
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(ip=args.topTen, limit=args.limit)                     
                     
                     print resultMessage.format(args.limit, "as per frequency of hit")                                        
-                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
+                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit, outputFormat=args.output, outputFrom='topTenH')
                     
                     print resultMessage.format(args.limit, "as per time")
-                    naviObj.displayResults(resultToPrintTopTenByTime)
+                    naviObj.displayResults(resultToPrintTopTenByTime, outputFormat=args.output, outputFrom='topTenT')
 
                 else:                    
                     resultMessage = "\n[+] APIs filtered by IP =>  Top 10 {0}"                    
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(ip=args.topTen)                     
                     
                     print resultMessage.format("as per frequency of hit")                    
-                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
+                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit, outputFormat=args.output, outputFrom='topTenH')
                     
                     print resultMessage.format("as per time")                    
-                    naviObj.displayResults(resultToPrintTopTenByTime)
+                    naviObj.displayResults(resultToPrintTopTenByTime, outputFormat=args.output, outputFrom='topTenT')
             
             else:
                 if args.limit:
@@ -254,21 +275,21 @@ if __name__ == '__main__':
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis(limit=args.limit) 
 
                     print resultMessage.format(args.limit, "as per frequency of hit")                    
-                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
+                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit, outputFormat=args.output, outputFrom='topTenH')
                     
                     print resultMessage.format(args.limit, "as per time")                    
-                    naviObj.displayResults(resultToPrintTopTenByTime)                    
+                    naviObj.displayResults(resultToPrintTopTenByTime, outputFormat=args.output, outputFrom='topTenT')                    
 
                 else:
                     resultMessage = "\n[+] APIs unfiltered =>  Top 10 {0}"                    
                     resultToPrintTopTenByFrequencyOfHit, resultToPrintTopTenByTime = naviObj.getTopTenApis()                     
 
                     print resultMessage.format("as per frequency of hit")                    
-                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit)
+                    naviObj.displayResults(resultToPrintTopTenByFrequencyOfHit, outputFormat=args.output, outputFrom='topTenH')
                     
                     print resultMessage.format("as per time")
-                    naviObj.displayResults(resultToPrintTopTenByTime)
-                    
+                    naviObj.displayResults(resultToPrintTopTenByTime, outputFormat=args.output, outputFrom='topTenT')
+        
         print "\n"                    
 
     except CommandLineErrors as e:
